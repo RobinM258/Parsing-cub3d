@@ -90,29 +90,55 @@ int Check_value(char *str)
     return (0); 
 }
 
-int size_map_x(int fd)
+int size_map_y(int fd)
 {
     char *str;
-    int x;
+    int y;
 
+    y = 0;
     str = get_next_line(fd);
+    printf("|%s|\n", str);
+    while (str)
+    {
+        str = get_next_line(fd);
+        if (strncmp(str, "0", 1) == 0 || strncmp(str, "1", 1) == 0)
+            y++;
+    }
+    return (y);
+}
+int size_map_x(void)
+{
+    char *str;
+    int fd = open("map.cub", O_RDONLY);
+    int x;
+    while (str && )
+    str = get_next_line(fd);
+    
+    x = strlen(str);
     if (strncmp(str, "0", 1) == 0 || strncmp(str, "1", 1) == 0)
     {
-        while ((fd > 0 && strncmp(str, "0", 1) == 0) || (fd > 0 && strncmp(str, "1", 1) == 0))
+        while ((str && fd > 0 && strncmp(str, "0", 1) == 0) || (str && fd > 0 && strncmp(str, "1", 1) == 0))
         {
-            if (strlen(str) > x)
-                x = strlen(str);
             str = get_next_line(fd);
+            if (str)
+                if (strlen(str) > x)
+                    x = strlen(str);
         }
     }
-    printf(" x = %d\n", x);
     return (x);
 }
 
 int Parse_map(int fd)
 {
-    size_map_x(fd);
-    //size_map_y(fd);
+    int y;
+    int x;
+
+   x = size_map_x();
+   close(fd);
+   // fd = open("map.cub", O_RDONLY);
+    y = size_map_y(fd);
+    printf(" y = %d\n", y);
+    return (0);
 }
 
 int main (void)
@@ -152,7 +178,7 @@ int main (void)
                 return (1);
         } 
     }
-    printf("ok\n");
+    printf("ok\nParsing Map \n");
     while ((fd > 0 && strncmp(str, "0", 1) != 0) && (fd > 0 && strncmp(str, "1", 1) != 0))
         str = get_next_line(fd);
     Parse_map(fd);
