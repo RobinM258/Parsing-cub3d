@@ -90,54 +90,57 @@ int Check_value(char *str)
     return (0); 
 }
 
-int size_map_y(int fd)
+int size_map_y(void)
 {
-    char *str;
+    int fd;
+    char *str = NULL;
     int y;
 
     y = 0;
+    fd = open ("map.cub", O_RDONLY);
     str = get_next_line(fd);
-    printf("|%s|\n", str);
     while (str)
     {
-        str = get_next_line(fd);
         if (strncmp(str, "0", 1) == 0 || strncmp(str, "1", 1) == 0)
+        {
+           // printf("str = %s\n", str);
             y++;
+        }
+        if ((strncmp(str, "0", 1) != 0 && strncmp(str, "1", 1) != 0) && y > 0)
+        {
+            printf("str = %s\n", str);
+            return (-1);
+        }
+        str = get_next_line(fd);
     }
     return (y);
 }
-int size_map_x(void)
-{
-    char *str;
-    int fd = open("map.cub", O_RDONLY);
-    int x;
-    while (str && )
-    str = get_next_line(fd);
-    
-    x = strlen(str);
-    if (strncmp(str, "0", 1) == 0 || strncmp(str, "1", 1) == 0)
-    {
-        while ((str && fd > 0 && strncmp(str, "0", 1) == 0) || (str && fd > 0 && strncmp(str, "1", 1) == 0))
-        {
-            str = get_next_line(fd);
-            if (str)
-                if (strlen(str) > x)
-                    x = strlen(str);
-        }
-    }
-    return (x);
-}
 
-int Parse_map(int fd)
+int Parse_map(int fd, char *line)
 {
     int y;
-    int x;
+    int i;
+    int j;
+    char **map;
 
-   x = size_map_x();
-   close(fd);
-   // fd = open("map.cub", O_RDONLY);
-    y = size_map_y(fd);
+    y = size_map_y();
+    i = 0;
+    j = 0;
     printf(" y = %d\n", y);
+    if (y <= 0)
+    {
+        printf("MAP ERROR\n");
+        return (1);
+    }
+    map = malloc(sizeof(char *) * (y + 1));
+    if (!map)
+        return (1);
+    while (line)
+    {
+        map[i++] = line;
+        line = get_next_line(fd);
+    }
+    i = 0;
     return (0);
 }
 
@@ -181,7 +184,7 @@ int main (void)
     printf("ok\nParsing Map \n");
     while ((fd > 0 && strncmp(str, "0", 1) != 0) && (fd > 0 && strncmp(str, "1", 1) != 0))
         str = get_next_line(fd);
-    Parse_map(fd);
+    Parse_map(fd, str);
     printf("parsing passé\n");
 
     return (0);

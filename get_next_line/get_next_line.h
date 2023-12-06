@@ -6,7 +6,7 @@
 /*   By: romartin <romartin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 11:45:10 by romartin          #+#    #+#             */
-/*   Updated: 2023/03/17 10:27:28 by romartin         ###   ########.fr       */
+/*   Updated: 2023/12/06 15:24:23 by romartin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <stdlib.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 3
+#  define BUFFER_SIZE 1
 # endif
 
 char	*get_next_line(int fd);
