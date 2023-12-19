@@ -116,7 +116,7 @@ int size_map_y(void)
     return (y);
 }
 
-int Parse_map(int fd, char *line)
+char **Parse_map(int fd, char *line)
 {
     int y;
     int i;
@@ -130,17 +130,67 @@ int Parse_map(int fd, char *line)
     if (y <= 0)
     {
         printf("MAP ERROR\n");
-        return (1);
+        return (NULL);
     }
     map = malloc(sizeof(char *) * (y + 1));
     if (!map)
-        return (1);
+        return (NULL);
     while (line)
     {
         map[i++] = line;
         line = get_next_line(fd);
     }
+    map[i] = NULL;
     i = 0;
+    return (map);
+}
+int check_coord(char **map, int y, int x)
+{
+    if (y == 0 || x == 0 || (map[y - 1][x - 1] != '0' && map[y - 1][x - 1] != '1'))
+        return (1);
+    if (y == 0 || (map[y - 1][x] != '0' && map[y - 1][x] != '1'))
+        return (1);
+    if (y == 0 || (map[y - 1][x + 1] != '0' && map[y - 1][x + 1] != '1'))
+        return (1);
+
+    if (x == 0 || (map[y][x - 1] != '0' && map[y][x - 1] != '1'))
+        return (1);
+    if (map[y][x + 1] != '0' && map[y][x + 1] != '1')
+        return (1);
+    return (0);
+
+    if (x == 0 || (map[y + 1][x - 1] != '0' && map[y + 1][x - 1] != '1'))
+        return (1);
+    if ((map[y + 1][x] != '0' && map[y + 1][x] != '1'))
+        return (1);
+    if ((map[y + 1][x + 1] != '0' && map[y + 1][x + 1] != '1'))
+        return (1);
+    return (0);
+}
+
+int true_map(char **map)
+{
+    int x;
+    int y;
+
+    x = 0;
+    y = 0;
+    while (map[y] != NULL)
+    {
+        printf("%s", map[y]);
+        while (map[y][x])
+        {
+            if (map[y][x] == '0')
+                if (check_coord(map, y, x) == 1)
+                {
+                    printf("y = %d x = %d", y, x);
+                    return (1);
+                }
+            x++;
+        }
+        x = 0;
+        y++;
+    }
     return (0);
 }
 
@@ -148,6 +198,7 @@ int main (void)
 {
     int fd = open("map.cub", O_RDONLY);
     char *str;
+    char **map;
     int i;
 
     i = 0;
@@ -184,7 +235,12 @@ int main (void)
     printf("ok\nParsing Map \n");
     while ((fd > 0 && strncmp(str, "0", 1) != 0) && (fd > 0 && strncmp(str, "1", 1) != 0))
         str = get_next_line(fd);
-    Parse_map(fd, str);
+    map = Parse_map(fd, str);
+    if (true_map(map) == 1)
+    {
+        printf("map error\n");
+        return (1);
+    }
     printf("parsing passé\n");
 
     return (0);
