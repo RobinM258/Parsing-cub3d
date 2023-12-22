@@ -89,28 +89,37 @@ int Check_value(char *str)
     }
     return (0); 
 }
+int true_map_line(char *str)
+{
+    int i;
+
+    i = 0;
+    while ((str[i] && str[i] == ' ') || (str[i] && str[i] == '1') || (str[i] && str[i] == '0') || (str[i] && str[i] == 'n') )
+        i++;
+    if (str[i] == '\n')
+    {
+        printf(" |%c|  %s", str[i], str);
+        return (1);
+    }
+    return (0);
+}
 
 int size_map_y(void)
 {
     int fd;
     char *str = NULL;
     int y;
+    int i;
 
     y = 0;
     fd = open ("map.cub", O_RDONLY);
     str = get_next_line(fd);
-    while (str)
+    while (str && true_map_line(str) == 1)
+        str = get_next_line(fd);
+    while (str && true_map_line(str) == 0)
     {
-        if (strncmp(str, "0", 1) == 0 || strncmp(str, "1", 1) == 0)
-        {
-           // printf("str = %s\n", str);
-            y++;
-        }
-        if ((strncmp(str, "0", 1) != 0 && strncmp(str, "1", 1) != 0) && y > 0)
-        {
-            printf("str = %s\n", str);
-            return (-1);
-        }
+        printf("str = %s\n", str);
+        y++;
         str = get_next_line(fd);
     }
     return (y);
@@ -236,6 +245,8 @@ int main (void)
     while ((fd > 0 && strncmp(str, "0", 1) != 0) && (fd > 0 && strncmp(str, "1", 1) != 0))
         str = get_next_line(fd);
     map = Parse_map(fd, str);
+    if (map == NULL)
+        return (1);
     if (true_map(map) == 1)
     {
         printf("map error\n");
